@@ -1,0 +1,105 @@
+---
+title: "Data aquisition"
+subtitle: "Exercise 2: Web scraping & Poll aggregation"
+author: "Markus Kollberg & Ivo Bantel"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# relevant packages
+library(tidyverse)
+library(rvest)
+library(purrr)
+library(dplyr)
+library(janitor)
+```
+
+## Introduction
+
+Next, we'll embark on a slightly bigger project. Let's imagine we're interested in German political winds and want to use polling data to visualize this.
+
+But as good data journalists, we're not just interested in _a poll_. We're interested in all polls and more so, we're interested in *all polls over time*, similar to POLITICO's *Poll of Polls* (e.g. [Germany](https://www.politico.eu/europe-poll-of-polls/germany) or [Czechia](https://www.politico.eu/europe-poll-of-polls/czech-republic)).
+
+For this, we'll proceed step by step. First, we're using another aspect of data acquisition: *web scraping* using the `rvest` package.
+
+## Exercise 2.1: Data acquisition through web scraping
+
+To obtain the data, we need a page providing German polling data. Luckily for us, [wahlrecht.de](https://www.wahlrecht.de) provides these data readily available.
+
+The goal of this task is to obtain a data set from the sub pages of `https://www.wahlrecht.de/umfragen`
+
+**Task 2.1**:
+
+- retrieve tables from the relevant pages (`https://www.wahlrecht.de/umfragen/allensbach.htm`, `https://www.wahlrecht.de/umfragen/emnid.htm`, `https://www.wahlrecht.de/umfragen/forsa.htm`, `https://www.wahlrecht.de/umfragen/politbarometer.htm`, `https://www.wahlrecht.de/umfragen/gms.htm`, `https://www.wahlrecht.de/umfragen/dimap.htm`, `https://www.wahlrecht.de/umfragen/insa.htm`, `https://www.wahlrecht.de/umfragen/yougov.htm`)
+
+- clean the result
+
+- concatenate into one table
+
+
+```{r scraping_wahlrecht, warning=FALSE}
+
+# your code here
+
+```
+
+The result of this step should be a data set (e.g. `tibble`) containing something similar to this:
+```{r example_result_scraping_wahlrecht, echo=F}
+structure(list(institute = c("Allensbach", "Allensbach", "Allensbach", 
+"Allensbach", "Allensbach", "Allensbach"), date = c("19.04.2025", 
+"27.03.2025", "21.02.2025", "13.02.2025", "23.01.2025", "20.12.2024"
+), cducsu = c(27, 29.5, 32, 32, 34, 36), spd = c(16, 16, 14.5, 
+15, 17, 16), grune = c(12, 11.5, 12, 13, 13.5, 12), fdp = c(3, 
+3, 4.5, 5, 4, 4), linke = c(10, 10, 7.5, 6, NA, NA), afd = c(23.5, 
+21, 20, 20, 20, 18), bsw = c(4, 4, 4.5, 4, 5, 6), befragte = c(1.048, 
+1.031, 1.064, 1.021, 1.015, 1.006)), row.names = c(NA, -6L), class = c("tbl_df", 
+"tbl", "data.frame"))
+```
+
+
+## Exercise 2.2: Visualizing scraped complicate data
+
+Next, we want to present these data and visualize polling aggregation trends over time.
+
+If you didn't succeed with the scraping or (more likely) the cleaning entirely: let us know so we can help.
+
+Afterwards, you can use [this](https://www.dropbox.com/scl/fi/ub04b3zho4drtrw3pbqre/DE_wahlrecht_polls_student-copy.csv?rlkey=rsk0fhbuly3v8aewe0foxhytm&dl=0) data set
+
+We want to plot individual polls as dots and trends over time as lines. The color codes have been loaded for you already.
+
+```{r visualization_colors}
+party_cols <- c(
+    cducsu = "#000000",
+    afd    = "#0489DB",
+    spd    = "#E3000F",
+    grune  = "#1AA037",
+    linke  = "#E3000F",
+    fdp    = "#FFEF00",
+    bsw    = "#A7402E"
+)
+```
+
+This data is already fairly clean (as we have pre-cleaned with the scraping). So it only requires minimal adjustments for plotting. 
+
+Use `ggplot2` to create a smoothed line chart overlaying a scatter plot.
+
+```{r visualizing_german_polls, warning=FALSE, message=FALSE}
+
+# your code here
+
+```
+
+### Exercise 2.3 (Bonus!): Adding to plot
+
+If you want to go beyond this:
+
+- add polling error intervals based on sample sizes
+- add election "ground truth" into plot and adjust the trends
+
+```{r visualizing_german_polls_bonus, warning=FALSE, message=FALSE}
+
+# your code here
+
+```

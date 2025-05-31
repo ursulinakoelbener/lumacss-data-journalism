@@ -45,7 +45,36 @@ We'll start small - have a look at the data and think about 1-2 interesting visu
 
 ```{r sample_solution_exercise1_2}
 
-# your code here
+# Daten laden
+data <- read_csv("data/data_referendum.csv")
+
+# relevante Spalten auswählen
+data <- data %>%
+  select(Periode, 
+         `Obligatorisches Referendum Total`, 
+         `Fakultatives Referendum Total`, 
+         `Volksinitiative Total`)
+
+# Periode bereinigen und in Integer umwandeln
+data <- data %>%
+  mutate(
+    Periode = str_replace(Periode, "Jahr: ", ""),
+    Periode = as.integer(Periode)
+  )
+
+# Daten ins Long-Format umwandeln
+data_long <- data %>%
+  pivot_longer(cols = -Periode, 
+               names_to = "Kategorie", 
+               values_to = "Wert")
+
+# Liniendiagramm zeichnen
+ggplot(data_long, aes(x = Periode, y = Wert, fill = Kategorie)) +
+  geom_col(position = "stack") +
+  labs(title = "Entwicklung der Volksrechte über die Jahre",
+       x = "Jahr",
+       y = "Anzahl") +
+  theme_minimal()
 
 ```
 
