@@ -1,1 +1,1 @@
-# lumacss-data-journalism
+# Telling stories with Data - A Hands-on Introduction to Data Journalism
