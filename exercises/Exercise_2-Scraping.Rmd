@@ -41,7 +41,36 @@ The goal of this task is to obtain a data set from the sub pages of `https://www
 
 ```{r scraping_wahlrecht, warning=FALSE}
 
-# your code here
+# 1. data scraping ----
+urls_list <- c("https://www.wahlrecht.de/umfragen/allensbach.htm",
+               "https://www.wahlrecht.de/umfragen/emnid.htm")
+
+final_dataset <- data.frame()
+
+for (url in urls_list){
+  
+  current_page <- read_html(url)
+  current_table <- current_page %>% 
+    html_nodes(.,css=".wilko") 
+  
+  current_formatted_table <- current_table %>%
+    html_table() %>% 
+    as.data.frame() %>% 
+    mutate(Source=url)
+  
+  final_dataset <- bind_rows(final_dataset,current_formatted_table)
+}
+
+# 2. Clean data ----
+
+clean_data <- final_dataset %>% 
+  select(Date=1,`CDU.CSU`:Sonstige) %>% 
+  slice(-(1:5)) %>% 
+  mutate(across(everything(), ~ if_else(.x =="–", NA, .x))) %>% 
+  mutate(across(everything(), ~ str_replace_all(.x, "%", ""))) %>% 
+  mutate(across(everything(), ~ str_replace_all(.x, ",", "."))) %>% 
+  mutate(across(`CDU.CSU`:Sonstige, ~ as.numeric(.))) %>% 
+  mutate(Date=as.Date(Date,format = "%d.%m.%Y"))
 
 ```
 
@@ -87,7 +116,20 @@ Use `ggplot2` to create a smoothed line chart overlaying a scatter plot.
 
 ```{r visualizing_german_polls, warning=FALSE, message=FALSE}
 
-# your code here
+wide_format <- clean_data %>% 
+  pivot_longer(cols=`CDU.CSU`:Sonstige,
+               names_to="Political Party",
+               values_to="Vote Percentage")
+  
+
+visualisation <- ggplot(wide_format,aes(x=Date,y=`Vote Percentage`,color=`Political Party`))+
+  geom_point(size=1, color="black",alpha=0.1)+
+  geom_smooth(stat="smooth", se=FALSE)+
+  #scale_colour_manual(values=party_cols)+
+  theme_minimal()+
+  labs(title="German Voter Preferences",
+       x="Year",
+       y="Vote Intention(%)")
 
 ```
 
